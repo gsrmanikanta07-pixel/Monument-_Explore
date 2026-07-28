@@ -34,7 +34,7 @@ export default function Home() {
         </div>
       </nav>
 
-      {/* Clickable Hero Section */}
+      {/* Hero Section */}
       <a
         href="/explore"
         className="block"
@@ -87,12 +87,9 @@ export default function Home() {
 
           <div className="mt-16 grid gap-6 md:grid-cols-4">
 
-            {/* Step 1 */}
             <div className="rounded-2xl border border-stone-800 bg-stone-900 p-6">
 
-              <div className="text-4xl">
-                📸
-              </div>
+              <div className="text-4xl">📸</div>
 
               <h3 className="mt-5 text-xl font-bold">
                 1. Upload a Photo
@@ -104,12 +101,9 @@ export default function Home() {
 
             </div>
 
-            {/* Step 2 */}
             <div className="rounded-2xl border border-stone-800 bg-stone-900 p-6">
 
-              <div className="text-4xl">
-                🔍
-              </div>
+              <div className="text-4xl">🔍</div>
 
               <h3 className="mt-5 text-xl font-bold">
                 2. Identify
@@ -121,12 +115,9 @@ export default function Home() {
 
             </div>
 
-            {/* Step 3 */}
             <div className="rounded-2xl border border-stone-800 bg-stone-900 p-6">
 
-              <div className="text-4xl">
-                🏛️
-              </div>
+              <div className="text-4xl">🏛️</div>
 
               <h3 className="mt-5 text-xl font-bold">
                 3. Explore History
@@ -138,19 +129,16 @@ export default function Home() {
 
             </div>
 
-            {/* Step 4 */}
             <div className="rounded-2xl border border-stone-800 bg-stone-900 p-6">
 
-              <div className="text-4xl">
-                🔊
-              </div>
+              <div className="text-4xl">🔊</div>
 
               <h3 className="mt-5 text-xl font-bold">
                 4. Listen & Ask
               </h3>
 
               <p className="mt-3 leading-7 text-stone-400">
-                Listen to the narration and ask questions about the monument.
+                Listen to narration and ask questions about the monument.
               </p>
 
             </div>
@@ -178,6 +166,71 @@ export default function Home() {
         >
           Start Exploring
         </a>
+
+      </section>
+
+      {/* Statistics Section */}
+      <section className="border-t border-stone-800 px-6 py-24">
+
+        <div className="mx-auto max-w-6xl">
+
+          <div className="text-center">
+
+            <p className="text-sm uppercase tracking-[0.3em] text-amber-400">
+              Monument Explorer
+            </p>
+
+            <h2 className="mt-4 text-4xl font-bold">
+              Monument Explorer at a Glance
+            </h2>
+
+            <p className="mt-4 text-stone-400">
+              Bringing history closer through technology.
+            </p>
+
+          </div>
+
+          <div className="mt-16 grid gap-6 md:grid-cols-4">
+
+            <div className="rounded-2xl border border-stone-700 bg-stone-900 p-8 text-center">
+              <h3 className="text-5xl font-bold text-amber-400">
+                100+
+              </h3>
+              <p className="mt-3 text-stone-300">
+                Historical Monuments
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-stone-700 bg-stone-900 p-8 text-center">
+              <h3 className="text-5xl font-bold text-amber-400">
+                AI
+              </h3>
+              <p className="mt-3 text-stone-300">
+                Smart Recognition
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-stone-700 bg-stone-900 p-8 text-center">
+              <h3 className="text-5xl font-bold text-amber-400">
+                🔊
+              </h3>
+              <p className="mt-3 text-stone-300">
+                Audio Narration
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-stone-700 bg-stone-900 p-8 text-center">
+              <h3 className="text-5xl font-bold text-amber-400">
+                💬
+              </h3>
+              <p className="mt-3 text-stone-300">
+                Interactive Q&amp;A
+              </p>
+            </div>
+
+          </div>
+
+        </div>
 
       </section>
 

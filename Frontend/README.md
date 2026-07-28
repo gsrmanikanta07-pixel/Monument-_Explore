@@ -1,36 +1,178 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🏛️ Monument Explorer
 
-## Getting Started
+An AI-Powered Interactive Historical Tourism and Monument Exploration System developed using **Next.js**, **FastAPI**, **TypeScript**, and **Tailwind CSS**.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## 📖 Project Overview
+
+Monument Explorer is an interactive web application that allows users to upload images of historical monuments and explore their history, location, construction year, historical timeline, and additional information.
+
+The current version uses temporary backend data. The AI model for monument recognition will be integrated later.
+
+---
+
+## ✨ Features
+
+- 📸 Upload monument images
+- 🏛️ Identify historical monuments
+- 📍 View monument location
+- 📅 View construction year
+- 📚 Historical background
+- ⏳ Historical timeline
+- 🔊 Audio narration
+- ❓ Ask questions about monuments
+- ❤️ Save visited monuments
+- 🔍 Search visited monuments
+- 🗑️ Remove individual visits
+- 🧹 Clear all saved visits
+- 📱 Responsive user interface
+- 🚫 Custom 404 page
+
+---
+
+# 🛠️ Tech Stack
+
+## Frontend
+
+- Next.js
+- React
+- TypeScript
+- Tailwind CSS
+
+## Backend
+
+- FastAPI
+- Python
+- Uvicorn
+
+## Future AI Integration
+
+- Monument Image Classification Model
+- FastAPI Model Integration
+- AI-Based Monument Recognition
+
+---
+
+# 📂 Project Structure
+
+```
+Monument_Explorer/
+│
+├── Frontend/
+│   ├── src/
+│   ├── public/
+│   ├── package.json
+│   └── README.md
+│
+├── backend/
+│   ├── main.py
+│   └── requirements.txt
+│
+└── README.md
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+# 🚀 Installation
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Clone the Repository
 
-## Learn More
+```bash
+git clone <repository-url>
+```
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Frontend
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+cd Frontend
+npm install
+npm run dev
+```
 
-## Deploy on Vercel
+Frontend runs at:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```
+http://localhost:3000
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## Backend
+
+```bash
+cd backend
+python -m uvicorn main:app --reload
+```
+
+Backend runs at:
+
+```
+http://127.0.0.1:8000
+```
+
+---
+
+# 📸 Application Workflow
+
+1. Open the application.
+2. Upload a historical monument image.
+3. The backend identifies the monument.
+4. View monument information.
+5. Listen to audio narration.
+6. Ask questions about the monument.
+7. Save monuments to My Visits.
+8. Search or remove saved monuments.
+
+---
+
+# 🔮 Future Enhancements
+
+- AI-powered monument recognition
+- RAG-based historical knowledge
+- Multi-language support
+- Voice assistant
+- Interactive maps
+- Personalized recommendations
+- Cloud database integration
+
+---
+
+# 👥 Team
+
+### Frontend & Backend
+
+- Sampath
+
+### AI Model Integration
+
+- Team Member
+
+---
+
+# 📜 License
+
+This project was developed for educational purposes.
+
+---
+
+# 📷 Screenshots
+
+You can add screenshots of:
+
+- Home Page
+- Explore Page
+- Monument Details
+- My Visits
+- Ask Questions
+- Audio Narration
+
+---
+
+# ⭐ Thank You
+
+Thank you for exploring **Monument Explorer**.
+
+Discover • Learn • Explore 🏛️

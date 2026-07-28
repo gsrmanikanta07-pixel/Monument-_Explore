@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type TimelineEvent = {
   year: string;
@@ -20,7 +20,8 @@ export default function ExplorePage() {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
 
-  const [result, setResult] = useState<MonumentResult | null>(null);
+  const [result, setResult] =
+    useState<MonumentResult | null>(null);
 
   const [loading, setLoading] = useState(false);
 
@@ -30,38 +31,61 @@ export default function ExplorePage() {
 
   const [isSpeaking, setIsSpeaking] = useState(false);
 
+  const [error, setError] = useState("");
+
+  /*
+   * Select image
+   *
+   * The input value is cleared after every selection.
+   * Therefore, the user can select the same image again.
+   */
   function handleImageChange(
     event: React.ChangeEvent<HTMLInputElement>
   ) {
     const file = event.target.files?.[0];
 
-    if (file) {
-      window.speechSynthesis.cancel();
-
-      setSelectedImage(file);
-      setResult(null);
-      setAnswer("");
-      setQuestion("");
-      setIsSpeaking(false);
-
-      const previewUrl = URL.createObjectURL(file);
-      setImagePreview(previewUrl);
+    if (!file) {
+      return;
     }
 
-    // Allows selecting the same image again
+    // Stop current narration
+    window.speechSynthesis.cancel();
+
+    // Reset previous result
+    setSelectedImage(file);
+    setResult(null);
+    setAnswer("");
+    setQuestion("");
+    setError("");
+    setIsSpeaking(false);
+
+    // Create preview
+    const previewUrl = URL.createObjectURL(file);
+    setImagePreview(previewUrl);
+
+    // Allow selecting the same file again
     event.target.value = "";
   }
 
+  /*
+   * Identify monument
+   */
   async function identifyMonument() {
     if (!selectedImage) {
+      setError("Please select an image first.");
       return;
     }
 
     setLoading(true);
     setResult(null);
+    setError("");
 
     const formData = new FormData();
-    formData.append("image", selectedImage);
+
+    formData.append(
+      "image",
+      selectedImage
+    );
 
     try {
       const response = await fetch(
@@ -72,44 +96,58 @@ export default function ExplorePage() {
         }
       );
 
-      if (!response.ok) {
-        throw new Error("Backend request failed");
-      }
+      const data = await response.json();
 
-      const data: MonumentResult = await response.json();
+      if (!response.ok || data.error) {
+        throw new Error(
+          data.error || "Monument identification failed."
+        );
+      }
 
       setResult(data);
 
-      const existingVisits: MonumentResult[] = JSON.parse(
-        localStorage.getItem("monumentVisits") || "[]"
-      );
+      /*
+       * Save monument to My Visits
+       */
+      const existingVisits: MonumentResult[] =
+        JSON.parse(
+          localStorage.getItem("monumentVisits") || "[]"
+        );
 
-      const alreadyVisited = existingVisits.some(
-        (visit) =>
-          visit.monument_name === data.monument_name
-      );
+      const alreadyVisited =
+        existingVisits.some(
+          (visit) =>
+            visit.monument_name ===
+            data.monument_name
+        );
 
       if (!alreadyVisited) {
+        const updatedVisits = [
+          ...existingVisits,
+          data,
+        ];
+
         localStorage.setItem(
           "monumentVisits",
-          JSON.stringify([
-            ...existingVisits,
-            data,
-          ])
+          JSON.stringify(updatedVisits)
         );
       }
 
     } catch (error) {
       console.error(error);
 
-      alert(
+      setError(
         "Could not connect to the backend. Make sure FastAPI is running."
       );
+
     } finally {
       setLoading(false);
     }
   }
 
+  /*
+   * Ask question about monument
+   */
   async function askQuestion() {
     if (!question.trim() || !result) {
       return;
@@ -123,21 +161,27 @@ export default function ExplorePage() {
         "http://127.0.0.1:8000/ask-question",
         {
           method: "POST",
+
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type":
+              "application/json",
           },
+
           body: JSON.stringify({
             question: question,
-            monument_name: result.monument_name,
+            monument_name:
+              result.monument_name,
           }),
         }
       );
 
-      if (!response.ok) {
-        throw new Error("Question request failed");
-      }
-
       const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          "Question request failed"
+        );
+      }
 
       setAnswer(data.answer);
 
@@ -153,6 +197,9 @@ export default function ExplorePage() {
     }
   }
 
+  /*
+   * Text-to-Speech narration
+   */
   function speakMonument() {
     if (!result) {
       return;
@@ -166,21 +213,31 @@ export default function ExplorePage() {
 
     const narration = `
       ${result.monument_name}.
+
       Located in ${result.location}.
+
       Built in ${result.year_built}.
 
       ${result.description}
 
-      Historical background:
+      Historical background.
+
       ${result.history}
 
-      Historical timeline:
+      Historical timeline.
+
       ${result.timeline
-        .map((item) => `${item.year}: ${item.event}`)
+        .map(
+          (item) =>
+            `${item.year}: ${item.event}`
+        )
         .join(". ")}
     `;
 
-    const speech = new SpeechSynthesisUtterance(narration);
+    const speech =
+      new SpeechSynthesisUtterance(
+        narration
+      );
 
     speech.rate = 0.9;
     speech.pitch = 1;
@@ -193,7 +250,9 @@ export default function ExplorePage() {
       setIsSpeaking(false);
     };
 
-    window.speechSynthesis.speak(speech);
+    window.speechSynthesis.speak(
+      speech
+    );
   }
 
   return (
@@ -209,13 +268,14 @@ export default function ExplorePage() {
           ← Back to Home
         </a>
 
-        {/* Page Heading */}
+        {/* Heading */}
         <h1 className="mt-4 text-4xl font-bold">
           Explore a Monument
         </h1>
 
         <p className="mt-3 text-stone-400">
-          Upload a photo of a historical monument and discover its story.
+          Upload a photo of a historical monument
+          and discover its story.
         </p>
 
         {/* Upload Section */}
@@ -225,6 +285,7 @@ export default function ExplorePage() {
             htmlFor="monument-image"
             className="flex min-h-64 cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-stone-600 p-6 text-center transition hover:border-amber-400"
           >
+
             <span className="text-5xl">
               📸
             </span>
@@ -234,7 +295,7 @@ export default function ExplorePage() {
             </h2>
 
             <p className="mt-2 text-sm text-stone-400">
-              Click here to choose an image from your device
+              Click here to upload or change the image
             </p>
 
             <input
@@ -244,13 +305,22 @@ export default function ExplorePage() {
               onChange={handleImageChange}
               className="hidden"
             />
+
           </label>
+
+          {/* Error */}
+          {error && (
+            <div className="mt-6 rounded-lg border border-red-500 bg-red-950 p-4 text-red-300">
+              {error}
+            </div>
+          )}
 
           {/* Selected Image */}
           {selectedImage && (
+
             <div className="mt-6">
 
-              {/* Image Preview */}
+              {/* Preview */}
               {imagePreview && (
                 <img
                   src={imagePreview}
@@ -268,23 +338,31 @@ export default function ExplorePage() {
               </p>
 
               <button
-                type="button"
-                onClick={identifyMonument}
-                disabled={loading}
-                className="mt-6 rounded-full bg-amber-500 px-6 py-3 font-semibold text-stone-950 transition hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                {loading
-                  ? "Identifying..."
-                  : "Identify Monument"}
-              </button>
+                    type="button"
+                    onClick={identifyMonument}
+                    disabled={loading}
+                    className="mt-6 flex items-center justify-center rounded-full bg-amber-500 px-6 py-3 font-semibold text-stone-950 transition hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                    {loading ? (
+                    <div className="flex items-center gap-3">
+                    <div className="h-5 w-5 animate-spin rounded-full border-2 border-stone-950 border-t-transparent"></div>
+
+                    <span>Identifying...</span>
+                  </div>
+              ) :    (
+    "Identify Monument"
+  )}
+</button>
 
             </div>
+
           )}
 
         </div>
 
         {/* Monument Result */}
         {result && (
+
           <section className="mt-10 space-y-6">
 
             {/* Basic Information */}
@@ -310,7 +388,7 @@ export default function ExplorePage() {
 
               </div>
 
-              {/* Audio Narration */}
+              {/* Narration */}
               <button
                 type="button"
                 onClick={speakMonument}
@@ -358,32 +436,36 @@ export default function ExplorePage() {
 
               <div className="mt-6 space-y-6">
 
-                {result.timeline.map((item, index) => (
-                  <div
-                    key={index}
-                    className="flex gap-4 border-l-2 border-amber-500 pl-5"
-                  >
+                {result.timeline.map(
+                  (item, index) => (
 
-                    <div>
+                    <div
+                      key={index}
+                      className="flex gap-4 border-l-2 border-amber-500 pl-5"
+                    >
 
-                      <p className="font-bold text-amber-400">
-                        {item.year}
-                      </p>
+                      <div>
 
-                      <p className="mt-1 text-stone-300">
-                        {item.event}
-                      </p>
+                        <p className="font-bold text-amber-400">
+                          {item.year}
+                        </p>
+
+                        <p className="mt-1 text-stone-300">
+                          {item.event}
+                        </p>
+
+                      </div>
 
                     </div>
 
-                  </div>
-                ))}
+                  )
+                )}
 
               </div>
 
             </div>
 
-            {/* Ask AI Questions */}
+            {/* Ask Questions */}
             <div className="rounded-2xl border border-stone-700 bg-stone-900 p-8">
 
               <h2 className="text-2xl font-bold">
@@ -400,12 +482,18 @@ export default function ExplorePage() {
                   type="text"
                   value={question}
                   onChange={(event) =>
-                    setQuestion(event.target.value)
+                    setQuestion(
+                      event.target.value
+                    )
                   }
                   onKeyDown={(event) => {
-                    if (event.key === "Enter") {
+
+                    if (
+                      event.key === "Enter"
+                    ) {
                       askQuestion();
                     }
+
                   }}
                   placeholder="Why was this monument built?"
                   className="flex-1 rounded-lg border border-stone-700 bg-stone-950 px-4 py-3 text-white outline-none focus:border-amber-400"
@@ -414,15 +502,22 @@ export default function ExplorePage() {
                 <button
                   type="button"
                   onClick={askQuestion}
-                  disabled={asking || !question.trim()}
+                  disabled={
+                    asking ||
+                    !question.trim()
+                  }
                   className="rounded-lg bg-amber-500 px-6 py-3 font-semibold text-stone-950 transition hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  {asking ? "Thinking..." : "Ask"}
+                  {asking
+                    ? "Thinking..."
+                    : "Ask"}
                 </button>
 
               </div>
 
+              {/* Answer */}
               {answer && (
+
                 <div className="mt-6 rounded-lg bg-stone-800 p-5">
 
                   <p className="text-sm text-amber-400">
@@ -434,11 +529,13 @@ export default function ExplorePage() {
                   </p>
 
                 </div>
+
               )}
 
             </div>
 
           </section>
+
         )}
 
       </div>
